@@ -393,6 +393,7 @@ class Board(object):
 						}
 
 	def draw_Board(self):
+		print_possible_moves()
 		board_side = [' 8 \u2502',' 7 \u2502',' 6 \u2502',' 5 \u2502',' 4 \u2502',' 3 \u2502',' 2 \u2502',' 1 \u2502']
 		print('\n\n        a   b   c   d   e   f   g   h' + '\n    \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n   \u2502                                    \u2502')
 		k = 8
@@ -634,8 +635,20 @@ class Pawn(Figure):
 		self.poss_moves = self.get_sourrounding()	
 
 
+
+def print_possible_moves():
+	cur_Board = Chess_Board.get_positions()
+	for key in Chess_Board.Fig_Pos:
+		print("key:", key)
+		val = Chess_Board.Fig_Pos[key]
+		print("val:", val)
+		print("val.poss_moves::", val.poss_moves)
+
+
+
 def check_if_move_is_possible(start_position, end_position):
 	cur_Board = Chess_Board.get_positions()
+	print("start_position:", start_position)
 	if end_position in Chess_Board.Fig_Pos[(start_position)].poss_moves:
 		return True
 	else:
