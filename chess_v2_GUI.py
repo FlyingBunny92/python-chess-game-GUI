@@ -637,7 +637,24 @@ class Pawn(Figure):
 
 
 
-def first_level_moves_search(val1, key1, color1):
+def determine_type(obj):
+	classname1 = str(type(obj))
+	if 'Pawn' in classname1:
+		return 'Pawn'
+	if 'Rook' in classname1:
+		return 'Rook'
+	if 'Bishop' in classname1:
+		return 'Bishop'
+	if 'Knight' in classname1:
+		return 'Knight'
+	if 'Queen' in classname1:
+		return 'Queen'
+	if 'King' in classname1:
+		return 'King'
+
+
+
+def move_search(val1, key1, color1):
 	collisions = []
 	cur_Board = Chess_Board.get_positions()
 	for key2 in Chess_Board.Fig_Pos:
@@ -645,11 +662,11 @@ def first_level_moves_search(val1, key1, color1):
 		color2 = Chess_Board.Fig_Pos[key2]._color
 		if color1 != color2:
 			for move in val2.poss_moves:
-				print("key1:", key1)
-				print("key2:", key2)
-				print("move:", move)
+				# print("key1:", key1)
+				# print("key2:", key2)
+				# print("move:", move)
 				if key1 == move:
-					collisions.append([key1, key2, val1, val2])
+					collisions.append([key1, key2, determine_type(val1),  determine_type(val2)])
 
 
 	return collisions	
@@ -666,7 +683,7 @@ def first_level_moves():
 		# print("val.poss_moves::", val.poss_moves)
 		color = Chess_Board.Fig_Pos[key]._color
 		# print("color:", color)
-		collisions = first_level_moves_search(val, key, color)
+		collisions = move_search(val, key, color)
 		print("\n collisions:")
 		print(collisions)
 
