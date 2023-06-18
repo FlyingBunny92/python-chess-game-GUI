@@ -661,8 +661,7 @@ def determine_type(obj):
 
 
 
-def move_search(val1, key1, color1):
-	collisions = []
+def move_search(val1, key1, color1, attacks):
 	cur_Board = Chess_Board.get_positions()
 	for key2 in Chess_Board.Fig_Pos:
 		val2 = Chess_Board.Fig_Pos[key2]
@@ -673,16 +672,16 @@ def move_search(val1, key1, color1):
 				# print("key2:", key2)
 				# print("move:", move)
 				if key1 == move:
-					collisions.append([key1, key2, determine_type(val1),  determine_type(val2)])
+					attacks.append([key1, key2, determine_type(val1),  determine_type(val2)])
 
 
-	return collisions	
+	return attacks	
 
 
-def determine_score(collisions):
+def determine_score(attacks):
 	total_score = 0
-	for collision in collisions:
-		classname1 = collision[2]
+	for attack in attacks:
+		classname1 = attack[2]
 		if 'Pawn' in classname1:
 			total_score += 1
 		if 'Rook' in classname1:
@@ -701,6 +700,7 @@ def determine_score(collisions):
 
 
 def check_moves():
+	attacks = []
 	cur_Board = Chess_Board.get_positions()
 	for key in Chess_Board.Fig_Pos:
 		# print("key:", key)
@@ -709,12 +709,12 @@ def check_moves():
 		# print("val.poss_moves::", val.poss_moves)
 		color = Chess_Board.Fig_Pos[key]._color
 		# print("color:", color)
-		collisions = move_search(val, key, color)
-		print("\n collisions:")
-		print(collisions)
+		attacks = move_search(val, key, color, attacks)
+		print("\n attacks:")
+		print(attacks)
 		players_turn = determine_players_turn()
 		print("players_turn:", players_turn)
-		score = determine_score(collisions)
+		score = determine_score(attacks)
 		print("score:", score)
 
 
