@@ -1,5 +1,7 @@
 from tkinter import *
 import tkinter.messagebox
+import copy
+
 
 
 
@@ -18,6 +20,8 @@ endbutton_color = ''
 startbutton_color = ''
 error = -1
 last_movement = ()
+
+
 
 
 def restart_game():
@@ -394,7 +398,8 @@ class Board(object):
 
 	def draw_Board(self):
 		# print_possible_moves()
-		check_moves()
+		# check_moves()
+		simulate_move()
 		board_side = [' 8 \u2502',' 7 \u2502',' 6 \u2502',' 5 \u2502',' 4 \u2502',' 3 \u2502',' 2 \u2502',' 1 \u2502']
 		print('\n\n        a   b   c   d   e   f   g   h' + '\n    \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n   \u2502                                    \u2502')
 		k = 8
@@ -707,16 +712,44 @@ def check_moves():
 			attacks1 = move_search(val, key, color, attacks1)
 		else:
 			attacks2 = move_search(val, key, color, attacks2)
+
+	if len(attacks1) > 0:
 		print("\n attacks1:")
 		print(attacks1)
+	if len(attacks2) > 0:
 		print("\n attacks2:")
 		print(attacks2)
-		players_turn = determine_players_turn()
-		print("players_turn:", players_turn)
-		score1 = determine_score(attacks1)
-		print("score1:", score1)
-		score2 = determine_score(attacks2)
-		print("score2:", score2)
+
+	players_turn = determine_players_turn()
+	print("players_turn:", players_turn)
+
+	score1 = determine_score(attacks1)
+	print("score1:", score1)
+	score2 = determine_score(attacks2)
+	print("score2:", score2)
+
+	return score1, score2
+
+
+
+def simulate_move():
+	New_Board = copy.deepcopy(Chess_Board)
+	for key in New_Board.Fig_Pos:
+		val = Chess_Board.Fig_Pos[key]
+		color = val._color
+		pos = val.position
+		if len(val.poss_moves) > 0:
+			print("\n\n Simulating move:")
+			print("val.position:", val.position)
+			print("val.poss_moves[0]:", val.poss_moves[0])
+			temp = val.position
+			val.position = val.poss_moves[0]
+			val.poss_moves[0] = temp
+			score1, score2 = check_moves()
+			return True
+
+
+
 
 
 
