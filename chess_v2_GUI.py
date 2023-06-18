@@ -700,7 +700,8 @@ def determine_score(attacks):
 
 
 def check_moves():
-	attacks = []
+	attacks1 = []
+	attacks2 = []
 	cur_Board = Chess_Board.get_positions()
 	for key in Chess_Board.Fig_Pos:
 		# print("key:", key)
@@ -709,13 +710,20 @@ def check_moves():
 		# print("val.poss_moves::", val.poss_moves)
 		color = Chess_Board.Fig_Pos[key]._color
 		# print("color:", color)
-		attacks = move_search(val, key, color, attacks)
-		print("\n attacks:")
-		print(attacks)
+		if color == 0:
+			attacks1 = move_search(val, key, color, attacks1)
+		else:
+			attacks2 = move_search(val, key, color, attacks2)
+		print("\n attacks1:")
+		print(attacks1)
+		print("\n attacks2:")
+		print(attacks2)
 		players_turn = determine_players_turn()
 		print("players_turn:", players_turn)
-		score = determine_score(attacks)
-		print("score:", score)
+		score1 = determine_score(attacks1)
+		print("score1:", score1)
+		score2 = determine_score(attacks2)
+		print("score2:", score2)
 
 
 
