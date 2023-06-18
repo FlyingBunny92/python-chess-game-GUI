@@ -691,17 +691,17 @@ def determine_score(attacks):
 	for attack in attacks:
 		classname1 = attack[2]
 		if 'Pawn' in classname1:
-			total_score += 1
-		if 'Rook' in classname1:
-			total_score += 2
-		if 'Bishop' in classname1:
-			total_score += 5
-		if 'Knight' in classname1:
 			total_score += 10
+		if 'Bishop' in classname1:
+			total_score += 30
+		if 'Knight' in classname1:
+			total_score += 30
+		if 'Rook' in classname1:
+			total_score += 50
 		if 'Queen' in classname1:
-			total_score += 20
+			total_score += 90
 		if 'King' in classname1:
-			total_score += 100
+			total_score += 900
 
 
 	return total_score
