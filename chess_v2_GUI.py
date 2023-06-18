@@ -341,6 +341,12 @@ labelZahl1.grid(row=1, column=9, sticky='w')
 labelZahl2 = Label(tk, text='Game History', bg = 'white', width = 30)
 labelZahl2.config(font=(10))
 labelZahl2.grid(row=3, column=9, sticky='w')
+labelZahl3 = Label(tk, text="White Score: 0", bg = 'white', width = 30)
+labelZahl3.config(font=(10))
+labelZahl3.grid(row=6, column=9, sticky='w')
+labelZahl4 = Label(tk, text="Black Score: 0", bg = 'white', width = 30)
+labelZahl4.config(font=(10))
+labelZahl4.grid(row=7, column=9, sticky='w')
 
 history_gui = Text(tk, height=10, width=30, wrap = 'none', pady = 5, padx = 5)
 scroll = Scrollbar(tk, command=history_gui.yview)
@@ -398,8 +404,8 @@ class Board(object):
 
 	def draw_Board(self):
 		# print_possible_moves()
-		# check_moves()
-		simulate_move()
+		check_moves()
+		# simulate_move()
 		board_side = [' 8 \u2502',' 7 \u2502',' 6 \u2502',' 5 \u2502',' 4 \u2502',' 3 \u2502',' 2 \u2502',' 1 \u2502']
 		print('\n\n        a   b   c   d   e   f   g   h' + '\n    \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n   \u2502                                    \u2502')
 		k = 8
@@ -713,20 +719,22 @@ def check_moves():
 		else:
 			attacks2 = move_search(val, key, color, attacks2)
 
-	if len(attacks1) > 0:
-		print("\n attacks1:")
-		print(attacks1)
-	if len(attacks2) > 0:
-		print("\n attacks2:")
-		print(attacks2)
+
+	print("\n attacks1:")
+	print(attacks1)
+
+	print("\n attacks2:")
+	print(attacks2)
 
 	players_turn = determine_players_turn()
 	print("players_turn:", players_turn)
 
 	score1 = determine_score(attacks1)
 	print("score1:", score1)
+	labelZahl3['text'] = "White's score:"+str(score1)
 	score2 = determine_score(attacks2)
 	print("score2:", score2)
+	labelZahl4['text'] = "Black's score:"+str(score2)
 
 	return score1, score2
 
