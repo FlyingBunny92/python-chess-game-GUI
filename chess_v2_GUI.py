@@ -393,7 +393,8 @@ class Board(object):
 						}
 
 	def draw_Board(self):
-		print_possible_moves()
+		# print_possible_moves()
+		first_level_moves()
 		board_side = [' 8 \u2502',' 7 \u2502',' 6 \u2502',' 5 \u2502',' 4 \u2502',' 3 \u2502',' 2 \u2502',' 1 \u2502']
 		print('\n\n        a   b   c   d   e   f   g   h' + '\n    \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n   \u2502                                    \u2502')
 		k = 8
@@ -636,6 +637,41 @@ class Pawn(Figure):
 
 
 
+def first_level_moves_search(val1, key1, color1):
+	collisions = []
+	cur_Board = Chess_Board.get_positions()
+	for key2 in Chess_Board.Fig_Pos:
+		val2 = Chess_Board.Fig_Pos[key2]
+		color2 = Chess_Board.Fig_Pos[key2]._color
+		if color1 != color2:
+			for move in val2.poss_moves:
+				print("key1:", key1)
+				print("key2:", key2)
+				print("move:", move)
+				if key1 == move:
+					collisions.append([key1, key2, val1, val2])
+
+
+	return collisions	
+
+
+
+
+def first_level_moves():
+	cur_Board = Chess_Board.get_positions()
+	for key in Chess_Board.Fig_Pos:
+		# print("key:", key)
+		val = Chess_Board.Fig_Pos[key]
+		# print("val:", val)
+		# print("val.poss_moves::", val.poss_moves)
+		color = Chess_Board.Fig_Pos[key]._color
+		# print("color:", color)
+		collisions = first_level_moves_search(val, key, color)
+		print("\n collisions:")
+		print(collisions)
+
+
+
 def print_possible_moves():
 	cur_Board = Chess_Board.get_positions()
 	for key in Chess_Board.Fig_Pos:
@@ -643,6 +679,8 @@ def print_possible_moves():
 		val = Chess_Board.Fig_Pos[key]
 		print("val:", val)
 		print("val.poss_moves::", val.poss_moves)
+		color = Chess_Board.Fig_Pos[key]._color
+		print("color:", color)
 
 
 
