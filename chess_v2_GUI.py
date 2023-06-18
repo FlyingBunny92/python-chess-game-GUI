@@ -637,6 +637,13 @@ class Pawn(Figure):
 
 
 
+def determine_players_turn():
+	if 'White' in labelZahl1['text']:
+		return 0
+	else:
+		return 1
+
+
 def determine_type(obj):
 	classname1 = str(type(obj))
 	if 'Pawn' in classname1:
@@ -686,6 +693,8 @@ def first_level_moves():
 		collisions = move_search(val, key, color)
 		print("\n collisions:")
 		print(collisions)
+		players_turn = determine_players_turn()
+		print("players_turn:", players_turn)
 
 
 
