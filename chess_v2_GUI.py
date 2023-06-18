@@ -639,9 +639,9 @@ class Pawn(Figure):
 
 def determine_players_turn():
 	if 'White' in labelZahl1['text']:
-		return 1
+		return 2
 	else:
-		return 0
+		return 1
 
 
 def determine_type(obj):
