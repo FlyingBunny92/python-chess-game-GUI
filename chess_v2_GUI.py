@@ -679,6 +679,25 @@ def move_search(val1, key1, color1):
 	return collisions	
 
 
+def determine_score(collisions):
+	total_score = 0
+	for collision in collisions:
+		classname1 = collision[2]
+		if 'Pawn' in classname1:
+			total_score += 1
+		if 'Rook' in classname1:
+			total_score += 2
+		if 'Bishop' in classname1:
+			total_score += 5
+		if 'Knight' in classname1:
+			total_score += 10
+		if 'Queen' in classname1:
+			total_score += 20
+		if 'King' in classname1:
+			total_score += 100
+
+
+	return total_score
 
 
 def check_moves():
@@ -695,6 +714,8 @@ def check_moves():
 		print(collisions)
 		players_turn = determine_players_turn()
 		print("players_turn:", players_turn)
+		score = determine_score(collisions)
+		print("score:", score)
 
 
 
