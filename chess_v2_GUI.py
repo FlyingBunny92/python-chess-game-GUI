@@ -639,9 +639,9 @@ class Pawn(Figure):
 
 def determine_players_turn():
 	if 'White' in labelZahl1['text']:
-		return 0
-	else:
 		return 1
+	else:
+		return 0
 
 
 def determine_type(obj):
@@ -668,9 +668,6 @@ def move_search(val1, key1, color1, attacks):
 		color2 = Chess_Board.Fig_Pos[key2]._color
 		if color1 != color2:
 			for move in val2.poss_moves:
-				# print("key1:", key1)
-				# print("key2:", key2)
-				# print("move:", move)
 				if key1 == move:
 					attacks.append([key1, key2, determine_type(val1),  determine_type(val2)])
 
@@ -704,12 +701,8 @@ def check_moves():
 	attacks2 = []
 	cur_Board = Chess_Board.get_positions()
 	for key in Chess_Board.Fig_Pos:
-		# print("key:", key)
 		val = Chess_Board.Fig_Pos[key]
-		# print("val:", val)
-		# print("val.poss_moves::", val.poss_moves)
 		color = Chess_Board.Fig_Pos[key]._color
-		# print("color:", color)
 		if color == 0:
 			attacks1 = move_search(val, key, color, attacks1)
 		else:
