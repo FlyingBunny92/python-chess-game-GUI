@@ -404,8 +404,8 @@ class Board(object):
 
 	def draw_Board(self):
 		# print_possible_moves()
-		# check_moves()
-		simulate_move()
+		check_moves()
+		# simulate_moves()
 		board_side = [' 8 \u2502',' 7 \u2502',' 6 \u2502',' 5 \u2502',' 4 \u2502',' 3 \u2502',' 2 \u2502',' 1 \u2502']
 		print('\n\n        a   b   c   d   e   f   g   h' + '\n    \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n   \u2502                                    \u2502')
 		k = 8
@@ -849,20 +849,24 @@ def determine_possible_moves(type, color, pos, type2, color2, pos2):
 
 
 def check_pieces(board_dict, type, color, pos):
-
+	attacks = []
 	for pos2 in board_dict:
 		val2 = board_dict[pos2]
 		type2 = val2[0]
 		color2 = val2[1]
 		if color != color2:
+			possible_moves = determine_possible_moves(type, color, pos, type2, color2, pos2)
+			for move in possible_moves:
+				if pos == move:
+					attacks.push([type, color, pos, type2, color2, pos2])
+
+
+	return attacks		
 
 
 
-
-
-
-def simulate_move():
-	print("def simulate_move():")
+def simulate_moves():
+	print("def simulate_moves():")
 	# New_Board = pickle.loads(pickle.dumps(Chess_Board))
 	# New_Board = copy.deepcopy(Chess_Board)
 	# New_Board = Board()
@@ -873,7 +877,10 @@ def simulate_move():
 		val = board_dict[pos]
 		type = val[0]
 		color = val[1]
-		check_pieces(board_dict, type, color, pos)
+		attacks = check_pieces(board_dict, type, color, pos)
+		print("attacks:", attacks)
+	
+
 		
 
 
