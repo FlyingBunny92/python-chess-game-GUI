@@ -1,7 +1,7 @@
 from tkinter import *
 import tkinter.messagebox
 import copy
-
+import pickle
 
 
 
@@ -404,8 +404,8 @@ class Board(object):
 
 	def draw_Board(self):
 		# print_possible_moves()
-		check_moves()
-		# simulate_move()
+		# check_moves()
+		simulate_move()
 		board_side = [' 8 \u2502',' 7 \u2502',' 6 \u2502',' 5 \u2502',' 4 \u2502',' 3 \u2502',' 2 \u2502',' 1 \u2502']
 		print('\n\n        a   b   c   d   e   f   g   h' + '\n    \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n   \u2502                                    \u2502')
 		k = 8
@@ -707,7 +707,8 @@ def determine_score(attacks):
 	return total_score
 
 
-def check_moves():
+def check_moves(update_labels=True):
+	print("def check_moves():")
 	attacks1 = []
 	attacks2 = []
 	cur_Board = Chess_Board.get_positions()
@@ -719,44 +720,161 @@ def check_moves():
 		else:
 			attacks2 = move_search(val, key, color, attacks2)
 
-
-	print("\n attacks1:")
-	print(attacks1)
-
-	print("\n attacks2:")
-	print(attacks2)
-
-	players_turn = determine_players_turn()
-	print("players_turn:", players_turn)
-
 	score1 = determine_score(attacks1)
-	print("score1:", score1)
-	labelZahl3['text'] = "White's score:"+str(score1)
 	score2 = determine_score(attacks2)
-	print("score2:", score2)
-	labelZahl4['text'] = "Black's score:"+str(score2)
+	if update_labels==True:
+		players_turn = determine_players_turn()
+		labelZahl3['text'] = "White's score:"+str(score1)
+		labelZahl4['text'] = "Black's score:"+str(score2)
 
 	return score1, score2
 
 
 
-def simulate_move():
-	New_Board = copy.deepcopy(Chess_Board)
-	for key in New_Board.Fig_Pos:
+def copy_pieces(New_Board, Chess_Board):	
+	for (k,v), (k2,v2) in zip(Chess_Board.Fig_Pos.items(), New_Board.Fig_Pos.items()):
+		new_k = copy.deepcopy(k)
+		new_v = copy.deepcopy(v)
+		New_Board.Fig_Pos.update({k2: v2, new_k: new_v})
+		
+
+def convert_board_to_dict_representation(Chess_Board):
+	board_dict = {}
+	for key in Chess_Board.Fig_Pos:
 		val = Chess_Board.Fig_Pos[key]
 		color = val._color
 		pos = val.position
-		if len(val.poss_moves) > 0:
-			print("\n\n Simulating move:")
-			print("val.position:", val.position)
-			print("val.poss_moves[0]:", val.poss_moves[0])
-			temp = val.position
-			val.position = val.poss_moves[0]
-			val.poss_moves[0] = temp
-			score1, score2 = check_moves()
-			return True
+		type = determine_type(val)
+		board_dict[pos] = [type, color]
+
+	return board_dict
 
 
+def rook_moves(pos):
+	possible_moves = []	
+	for i in range(8):
+		possible_moves.push([pos[0], i])
+	for j in range(8):
+		possible_moves.push([j, pos[1]])
+	return possible_moves	
+
+
+def bishop_moves(pos):
+	possible_moves = []
+	i = pos[0]
+	j = pos[i]
+	while i > 0 and j > 0:
+		i -= 1
+		j -= 1
+		possible_moves.push([i, j])
+	i = pos[0]
+	j = pos[i]
+	while i < 8 and j < 8:
+		i += 1
+		j += 1
+		possible_moves.push([i, j])
+	i = pos[0]
+	j = pos[i]
+	while i < 8 and j > 0:
+		i += 1
+		j -= 1
+		possible_moves.push([i, j])
+	i = pos[0]
+	j = pos[i]
+	while i > 0 and j < 8:
+		i -= 1
+		j += 1
+		possible_moves.push([i, j])
+	return possible_moves
+
+
+def knight_moves(pos):
+	possible_moves = []
+	i = pos[0]
+	j = pos[i]
+	possible_moves.push([i+2, j+1])
+	possible_moves.push([i+1, j+2])
+	possible_moves.push([i+2, j+1])
+	possible_moves.push([i+1, j+2])
+	possible_moves.push([i-1, j-2])
+	possible_moves.push([i-2, j-1])
+	possible_moves.push([i+1, j-2])
+	possible_moves.push([i+2, j-1])
+	possible_moves.push([i-1, j+2])
+	possible_moves.push([i-2, j+1])
+	return possible_moves
+
+
+def king_moves(pos, possible_moves):
+	i = pos[0]
+	j = pos[i]
+	possible_moves = bishop_moves(pos)
+	possible_moves.push([i, j+1])
+	possible_moves.push([i, j-1])
+	possible_moves.push([i+1, j+1])
+	possible_moves.push([i+1, j-1])
+	possible_moves.push([i+1, j])
+	possible_moves.push([i-1, j+1])
+	possible_moves.push([i-1, j-1])
+	possible_moves.push([i-1, j])
+	return possible_moves
+
+def queen_moves(pos):
+	possible_moves = []
+	possible_moves = bishop_moves(pos)
+	possible_moves = bishop_moves(pos, possible_moves)
+	return possible_moves
+
+
+
+def determine_possible_moves(type, color, pos, type2, color2, pos2):
+	possible_moves = []
+	if 'Pawn' in type:
+		return 'Pawn'
+	if 'Rook' in type:
+		possible_moves = rook_moves(pos)
+		return possible_moves	
+	if 'Bishop' in type:
+		possible_moves = bishop_moves(pos)
+		return possible_moves
+	if 'Knight' in type:
+		possible_moves = knight_moves(pos)
+		return possible_moves
+	if 'Queen' in type:
+		possible_moves = queen_moves(pos)
+		return possible_moves
+	if 'King' in type:
+		possible_moves = knight_moves(pos)
+		return possible_moves
+
+
+def check_pieces(board_dict, type, color, pos):
+
+	for pos2 in board_dict:
+		val2 = board_dict[pos2]
+		type2 = val2[0]
+		color2 = val2[1]
+		if color != color2:
+
+
+
+
+
+
+def simulate_move():
+	print("def simulate_move():")
+	# New_Board = pickle.loads(pickle.dumps(Chess_Board))
+	# New_Board = copy.deepcopy(Chess_Board)
+	# New_Board = Board()
+	# copy_pieces(New_Board, Chess_Board)
+	board_dict = convert_board_to_dict_representation(Chess_Board)
+
+	for pos in board_dict:
+		val = board_dict[pos]
+		type = val[0]
+		color = val[1]
+		check_pieces(board_dict, type, color, pos)
+		
 
 
 
