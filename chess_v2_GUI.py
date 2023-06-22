@@ -404,8 +404,8 @@ class Board(object):
 
 	def draw_Board(self):
 		# print_possible_moves()
-		check_moves()
-		# simulate_moves()
+		# check_moves()
+		simulate_moves()
 		board_side = [' 8 \u2502',' 7 \u2502',' 6 \u2502',' 5 \u2502',' 4 \u2502',' 3 \u2502',' 2 \u2502',' 1 \u2502']
 		print('\n\n        a   b   c   d   e   f   g   h' + '\n    \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n   \u2502                                    \u2502')
 		k = 8
@@ -753,76 +753,76 @@ def convert_board_to_dict_representation(Chess_Board):
 def rook_moves(pos):
 	possible_moves = []	
 	for i in range(8):
-		possible_moves.push([pos[0], i])
+		possible_moves.append([pos[0], i])
 	for j in range(8):
-		possible_moves.push([j, pos[1]])
+		possible_moves.append([j, pos[1]])
 	return possible_moves	
 
 
 def bishop_moves(pos):
 	possible_moves = []
 	i = pos[0]
-	j = pos[i]
+	j = pos[1]
 	while i > 0 and j > 0:
 		i -= 1
 		j -= 1
-		possible_moves.push([i, j])
+		possible_moves.append([i, j])
 	i = pos[0]
-	j = pos[i]
+	j = pos[1]
 	while i < 8 and j < 8:
 		i += 1
 		j += 1
-		possible_moves.push([i, j])
+		possible_moves.append([i, j])
 	i = pos[0]
-	j = pos[i]
+	j = pos[1]
 	while i < 8 and j > 0:
 		i += 1
 		j -= 1
-		possible_moves.push([i, j])
+		possible_moves.append([i, j])
 	i = pos[0]
-	j = pos[i]
+	j = pos[1]
 	while i > 0 and j < 8:
 		i -= 1
 		j += 1
-		possible_moves.push([i, j])
+		possible_moves.append([i, j])
 	return possible_moves
 
 
 def knight_moves(pos):
 	possible_moves = []
 	i = pos[0]
-	j = pos[i]
-	possible_moves.push([i+2, j+1])
-	possible_moves.push([i+1, j+2])
-	possible_moves.push([i+2, j+1])
-	possible_moves.push([i+1, j+2])
-	possible_moves.push([i-1, j-2])
-	possible_moves.push([i-2, j-1])
-	possible_moves.push([i+1, j-2])
-	possible_moves.push([i+2, j-1])
-	possible_moves.push([i-1, j+2])
-	possible_moves.push([i-2, j+1])
+	j = pos[1]
+	possible_moves.append([i+2, j+1])
+	possible_moves.append([i+1, j+2])
+	possible_moves.append([i+2, j+1])
+	possible_moves.append([i+1, j+2])
+	possible_moves.append([i-1, j-2])
+	possible_moves.append([i-2, j-1])
+	possible_moves.append([i+1, j-2])
+	possible_moves.append([i+2, j-1])
+	possible_moves.append([i-1, j+2])
+	possible_moves.append([i-2, j+1])
 	return possible_moves
 
 
 def king_moves(pos, possible_moves):
 	i = pos[0]
-	j = pos[i]
+	j = pos[1]
 	possible_moves = bishop_moves(pos)
-	possible_moves.push([i, j+1])
-	possible_moves.push([i, j-1])
-	possible_moves.push([i+1, j+1])
-	possible_moves.push([i+1, j-1])
-	possible_moves.push([i+1, j])
-	possible_moves.push([i-1, j+1])
-	possible_moves.push([i-1, j-1])
-	possible_moves.push([i-1, j])
+	possible_moves.append([i, j+1])
+	possible_moves.append([i, j-1])
+	possible_moves.append([i+1, j+1])
+	possible_moves.append([i+1, j-1])
+	possible_moves.append([i+1, j])
+	possible_moves.append([i-1, j+1])
+	possible_moves.append([i-1, j-1])
+	possible_moves.append([i-1, j])
 	return possible_moves
 
 def queen_moves(pos):
 	possible_moves = []
 	possible_moves = bishop_moves(pos)
-	possible_moves = bishop_moves(pos, possible_moves)
+	possible_moves = king_moves(pos, possible_moves)
 	return possible_moves
 
 
@@ -849,8 +849,10 @@ def determine_possible_moves(type, color, pos, type2, color2, pos2):
 
 
 def check_pieces(board_dict, type, color, pos):
+	print("def check_pieces(board_dict, type, color, pos):")
 	attacks = []
 	for pos2 in board_dict:
+		print("pos2:", pos2)
 		val2 = board_dict[pos2]
 		type2 = val2[0]
 		color2 = val2[1]
@@ -858,7 +860,7 @@ def check_pieces(board_dict, type, color, pos):
 			possible_moves = determine_possible_moves(type, color, pos, type2, color2, pos2)
 			for move in possible_moves:
 				if pos == move:
-					attacks.push([type, color, pos, type2, color2, pos2])
+					attacks.append([type, color, pos, type2, color2, pos2])
 
 
 	return attacks		
@@ -879,7 +881,7 @@ def simulate_moves():
 		color = val[1]
 		attacks = check_pieces(board_dict, type, color, pos)
 		print("attacks:", attacks)
-	
+
 
 		
 
