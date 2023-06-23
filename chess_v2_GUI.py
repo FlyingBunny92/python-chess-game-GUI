@@ -905,8 +905,50 @@ def check_pieces(board_dict):
 					attacks.append([pos, pos2, val, val2])
 					break
 
+	total_score_black, total_score_white = score_pieces(attacks)
+	print("total_score_black", total_score_black)
+	print("total_score_white", total_score_white)
 
 	return attacks		
+
+
+def piece_score(piece_type):
+	total_score = 0
+	classname1 = piece_type
+	if 'Pawn' in classname1:
+		total_score += 10
+	if 'Bishop' in classname1:
+		total_score += 30
+	if 'Knight' in classname1:
+		total_score += 30
+	if 'Rook' in classname1:
+		total_score += 50
+	if 'Queen' in classname1:
+		total_score += 90
+	if 'King' in classname1:
+		total_score += 900
+
+
+	return total_score
+
+
+
+def score_pieces(attacks):
+	total_score_white = 0
+	total_score_black = 0
+	for attack in attacks:
+		piece_type = attack[3][0]
+		piece_color = attack[3][1]
+		print("piece_type:", piece_type)
+		if piece_color == 1:
+			total_score_black += piece_score(piece_type)
+		else:
+			total_score_white += piece_score(piece_type)
+
+	print("total_score_black:", total_score_black)
+	print("total_score_white:", total_score_white)
+	return total_score_black, total_score_white
+
 
 
 
