@@ -750,40 +750,74 @@ def convert_board_to_dict_representation(Chess_Board):
 	return board_dict
 
 
-def rook_moves(pos):
+def check_if_spot_non_empty(board_dict, pos):
+	position = str(pos[0])+","+str(pos[1])
+	for pos2 in board_dict:
+		position2 = str(pos2[0])+","+str(pos2[1])
+		if position == position2:
+			return True
+	return False
+
+
+def pawn_moves(pos):
+	possible_moves = []	
+	possible_moves.append([pos[0]+1, pos[1]+1])
+	possible_moves.append([pos[0]+1, pos[1]+1])
+	return possible_moves	
+
+
+def rook_moves(pos, board_dict):
 	possible_moves = []	
 	for i in range(8):
+		blocked = check_if_spot_non_empty(board_dict, [pos[0], i])
+		if blocked==True:
+			break
 		possible_moves.append([pos[0], i])
 	for j in range(8):
+		blocked = check_if_spot_non_empty(board_dict, [j, pos[1]])
+		if blocked==True:
+			break
 		possible_moves.append([j, pos[1]])
 	return possible_moves	
 
 
-def bishop_moves(pos):
+def bishop_moves(pos, board_dict):
 	possible_moves = []
 	i = pos[0]
 	j = pos[1]
 	while i > 0 and j > 0:
 		i -= 1
 		j -= 1
+		blocked = check_if_spot_non_empty(board_dict, [i, j])
+		if blocked==True:
+			break
 		possible_moves.append([i, j])
 	i = pos[0]
 	j = pos[1]
 	while i < 8 and j < 8:
 		i += 1
 		j += 1
+		blocked = check_if_spot_non_empty(board_dict, [i, j])
+		if blocked==True:
+			break
 		possible_moves.append([i, j])
 	i = pos[0]
 	j = pos[1]
 	while i < 8 and j > 0:
 		i += 1
 		j -= 1
+		blocked = check_if_spot_non_empty(board_dict, [i, j])
+		if blocked==True:
+			break
 		possible_moves.append([i, j])
 	i = pos[0]
 	j = pos[1]
 	while i > 0 and j < 8:
 		i -= 1
 		j += 1
+		blocked = check_if_spot_non_empty(board_dict, [i, j])
+		if blocked==True:
+			break
 		possible_moves.append([i, j])
 	return possible_moves
 
@@ -805,10 +839,10 @@ def knight_moves(pos):
 	return possible_moves
 
 
-def king_moves(pos, possible_moves):
+def king_moves(pos, possible_moves, board_dict):
 	i = pos[0]
 	j = pos[1]
-	possible_moves = bishop_moves(pos)
+	possible_moves = bishop_moves(pos, board_dict)
 	possible_moves.append([i, j+1])
 	possible_moves.append([i, j-1])
 	possible_moves.append([i+1, j+1])
@@ -819,53 +853,57 @@ def king_moves(pos, possible_moves):
 	possible_moves.append([i-1, j])
 	return possible_moves
 
-def queen_moves(pos):
+def queen_moves(pos, board_dict):
 	possible_moves = []
-	possible_moves = bishop_moves(pos)
-	possible_moves = king_moves(pos, possible_moves)
+	possible_moves = bishop_moves(pos, board_dict)
+	possible_moves = king_moves(pos, possible_moves, board_dict)
 	return possible_moves
 
 
 
-def determine_possible_moves(type, pos):
+def determine_possible_moves(type, pos, board_dict):
 	possible_moves = []
 	if 'Pawn' in type:
-		return []
+		possible_moves = pawn_moves(pos)
+		return possible_moves	
 	if 'Rook' in type:
-		possible_moves = rook_moves(pos)
+		possible_moves = rook_moves(pos, board_dict)
 		return possible_moves	
 	if 'Bishop' in type:
-		possible_moves = bishop_moves(pos)
+		possible_moves = bishop_moves(pos, board_dict)
 		return possible_moves
 	if 'Knight' in type:
 		possible_moves = knight_moves(pos)
 		return possible_moves
 	if 'Queen' in type:
-		possible_moves = queen_moves(pos)
+		possible_moves = queen_moves(pos, board_dict)
 		return possible_moves
 	if 'King' in type:
-		possible_moves = knight_moves(pos)
+		possible_moves = king_moves(pos, possible_moves, board_dict)
 		return possible_moves
 
 
-def check_pieces(board_dict, type, color, pos):
+def check_pieces(board_dict):
 	print("def check_pieces(board_dict, type, color, pos):")
 	attacks = []
-	for pos2 in board_dict:
-		val2 = board_dict[pos2]
-		type2 = val2[0]
-		color2 = val2[1]
-		if color != color2:
-			possible_moves = determine_possible_moves(type, pos)
-			p = list(board_dict.keys())
-			positions = [str(z[0])+","+str(z[1]) for z in p]
-			if(len(possible_moves) > 1):
-				for m in possible_moves:
-						print("m:", m)
-						move = str(m[0])+","+str(m[1])
-						if move in positions:
-							print("if move in positions:")
-							attacks.append([pos, m, type, color, type2, color2])
+	for pos in board_dict:
+		val = board_dict[pos]
+		type = val[0]
+		color = val[1]
+		possible_moves = determine_possible_moves(type, pos, board_dict)
+		print("possible_moves:", possible_moves)
+		for pos2 in board_dict:
+			val2 = board_dict[pos2]
+			type2 = val2[0]
+			color2 = val2[1]
+			if color != color2:
+				position = str(pos2[0])+","+str(pos2[1])
+				moves = [str(p[0])+","+str(p[1]) for p in possible_moves]
+				print("pos2:", pos2)
+				if position in moves:
+					print("if position in possible_moves:")
+					attacks.append([pos, pos2])
+					break
 
 
 	return attacks		
@@ -880,12 +918,9 @@ def simulate_moves():
 	# copy_pieces(New_Board, Chess_Board)
 	board_dict = convert_board_to_dict_representation(Chess_Board)
 
-	for pos in board_dict:
-		val = board_dict[pos]
-		type = val[0]
-		color = val[1]
-		attacks = check_pieces(board_dict, type, color, pos)
-		print("attacks:", attacks)
+
+	attacks = check_pieces(board_dict)
+	print("attacks:", attacks)
 
 
 		
