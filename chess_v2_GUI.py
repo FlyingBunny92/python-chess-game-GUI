@@ -902,7 +902,7 @@ def check_pieces(board_dict):
 				print("pos2:", pos2)
 				if position in moves:
 					print("if position in possible_moves:")
-					attacks.append([pos, pos2])
+					attacks.append([pos, pos2, val, val2])
 					break
 
 
