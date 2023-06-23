@@ -830,7 +830,7 @@ def queen_moves(pos):
 def determine_possible_moves(type, color, pos, type2, color2, pos2):
 	possible_moves = []
 	if 'Pawn' in type:
-		return 'Pawn'
+		return []
 	if 'Rook' in type:
 		possible_moves = rook_moves(pos)
 		return possible_moves	
@@ -852,15 +852,20 @@ def check_pieces(board_dict, type, color, pos):
 	print("def check_pieces(board_dict, type, color, pos):")
 	attacks = []
 	for pos2 in board_dict:
-		print("pos2:", pos2)
 		val2 = board_dict[pos2]
 		type2 = val2[0]
 		color2 = val2[1]
 		if color != color2:
 			possible_moves = determine_possible_moves(type, color, pos, type2, color2, pos2)
-			for move in possible_moves:
-				if pos == move:
-					attacks.append([type, color, pos, type2, color2, pos2])
+			p = list(board_dict.keys())
+			positions = [str(z[0])+","+str(z[1]) for z in p]
+			if(len(possible_moves) > 1):
+				for m in possible_moves:
+						print("m:", m)
+						move = str(m[0])+","+str(m[1])
+						if move in positions:
+							print("if move in positions:")
+							attacks.append([type, color, m, type2, color2, pos2])
 
 
 	return attacks		
