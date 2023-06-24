@@ -883,35 +883,6 @@ def determine_possible_moves(type, pos, board_dict):
 		return possible_moves
 
 
-def check_pieces(board_dict):
-	print("def check_pieces(board_dict, type, color, pos):")
-	attacks = []
-	for pos in board_dict:
-		val = board_dict[pos]
-		type = val[0]
-		color = val[1]
-		possible_moves = determine_possible_moves(type, pos, board_dict)
-		print("possible_moves:", possible_moves)
-		for pos2 in board_dict:
-			val2 = board_dict[pos2]
-			type2 = val2[0]
-			color2 = val2[1]
-			if color != color2:
-				position = str(pos2[0])+","+str(pos2[1])
-				moves = [str(p[0])+","+str(p[1]) for p in possible_moves]
-				print("pos2:", pos2)
-				if position in moves:
-					print("if position in possible_moves:")
-					attacks.append([pos, pos2, val, val2])
-					break
-
-	total_score_black, total_score_white = score_pieces(attacks)
-	print("total_score_black", total_score_black)
-	print("total_score_white", total_score_white)
-
-	return attacks		
-
-
 def piece_score(piece_type):
 	total_score = 0
 	classname1 = piece_type
@@ -945,9 +916,75 @@ def score_pieces(attacks):
 		else:
 			total_score_white += piece_score(piece_type)
 
+
+	return total_score_black, total_score_white
+
+
+def check_pieces(board_dict):
+	attacks = []
+	for pos in board_dict:
+		val = board_dict[pos]
+		type = val[0]
+		color = val[1]
+		possible_moves = determine_possible_moves(type, pos, board_dict)
+		for pos2 in board_dict:
+			val2 = board_dict[pos2]
+			type2 = val2[0]
+			color2 = val2[1]
+			if color != color2:
+				position = str(pos2[0])+","+str(pos2[1])
+				moves = [str(p[0])+","+str(p[1]) for p in possible_moves]
+				if position in moves:
+					attacks.append([pos, pos2, val, val2])
+					break
+
+	total_score_black, total_score_white = score_pieces(attacks)
+	return attacks, total_score_black, total_score_white
+
+
+
+def find_best_move():
+	print("def find_best_move():")
+	max_black_score = 0
+	best_move = [None, None]
+	board_dict = convert_board_to_dict_representation(Chess_Board)
+
+	# new_board_dict = board_dict.copy()
+	new_board_dict = dict(board_dict)
+	attacks, total_score_black, total_score_white = check_pieces(board_dict)
+	print("attacks:", attacks)
 	print("total_score_black:", total_score_black)
 	print("total_score_white:", total_score_white)
-	return total_score_black, total_score_white
+	for pos in new_board_dict:
+		val = new_board_dict[pos]
+		type = val[0]
+		color = val[1]
+		# new_board_dict_copy = new_board_dict.copy()
+		new_board_dict_copy = dict(new_board_dict)
+		print("new_board_dict.keys():", new_board_dict.keys())
+		print("new_board_dict_copy.keys():", new_board_dict_copy.keys())
+		possible_moves = determine_possible_moves(type, pos, new_board_dict_copy)
+		print("new_board_dict.keys():", new_board_dict.keys())
+		print("new_board_dict_copy.keys():", new_board_dict_copy.keys())
+		for move in possible_moves:
+			new_board_dict_copy = dict(new_board_dict)
+			move_tuple = (move[0], move[1])
+			print("new_board_dict_copy:", new_board_dict_copy)
+			print("move_tuple:", move_tuple)
+			print("new_board_dict.keys():", new_board_dict.keys())
+			print("new_board_dict_copy.keys():", new_board_dict_copy.keys())
+			returnedValue = new_board_dict_copy.pop(pos)
+			new_board_dict_copy[move_tuple] = copy.copy(val)
+
+			
+			attacks, total_score_black, total_score_white = check_pieces(new_board_dict_copy)
+			score = total_score_black - total_score_white
+			print("score:", score)
+			if score > max_black_score:
+				max_black_score = score
+				best_move = [copy.deepcopy(pos), copy.deepcopy(move)]
+
+	return best_move
 
 
 
@@ -960,13 +997,12 @@ def simulate_moves():
 	# copy_pieces(New_Board, Chess_Board)
 	board_dict = convert_board_to_dict_representation(Chess_Board)
 
-
-	attacks = check_pieces(board_dict)
+	attacks, total_score_black, total_score_white = check_pieces(board_dict)
 	print("attacks:", attacks)
-
-
-		
-
+	print("total_score_black:", total_score_black)
+	print("total_score_white:", total_score_white)
+	best_move = find_best_move()
+	print("best_move:", best_move)
 
 
 
