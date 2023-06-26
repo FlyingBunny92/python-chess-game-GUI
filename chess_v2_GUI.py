@@ -402,10 +402,26 @@ class Board(object):
 						(6,7) : Pawn(1, (6,7), [])
 						}
 
+	def simulate_board_moves(self):
+		# New_Board = pickle.loads(pickle.dumps(Chess_Board))
+		# New_Board = copy.deepcopy(Chess_Board)
+		# New_Board = Board()
+		# copy_pieces(New_Board, Chess_Board)
+		board_dict = convert_board_to_dict_representation(Chess_Board)
+		attacks, total_score_black, total_score_white = check_pieces(board_dict)
+		print("attacks:", attacks)
+		best_move = find_best_move()
+		print("best_move:", best_move)
+		if best_move[0] != None and best_move[1] != None:
+			best_move_tuple_1 = ( (best_move[0][0], best_move[0][1]) )
+			best_move_tuple_2 = ( (best_move[1][0], best_move[1][1]) )
+			print("Updating Position:"+ str(best_move_tuple_1) + " to "+ str(best_move_tuple_2))
+			Chess_Board.update_positions(best_move_tuple_1, best_move_tuple_2)
+
+
 	def draw_Board(self):
 		# print_possible_moves()
 		# check_moves()
-		simulate_moves()
 		board_side = [' 8 \u2502',' 7 \u2502',' 6 \u2502',' 5 \u2502',' 4 \u2502',' 3 \u2502',' 2 \u2502',' 1 \u2502']
 		print('\n\n        a   b   c   d   e   f   g   h' + '\n    \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n   \u2502                                    \u2502')
 		k = 8
@@ -842,15 +858,32 @@ def king_moves(pos, possible_moves, board_dict):
 	i = pos[0]
 	j = pos[1]
 	possible_moves = bishop_moves(pos, board_dict)
-	possible_moves.append([i, j+1])
-	possible_moves.append([i, j-1])
-	possible_moves.append([i+1, j+1])
-	possible_moves.append([i+1, j-1])
-	possible_moves.append([i+1, j])
-	possible_moves.append([i-1, j+1])
-	possible_moves.append([i-1, j-1])
-	possible_moves.append([i-1, j])
+	blocked = check_if_spot_non_empty(board_dict, [i, j+1])
+	if blocked==False:
+		possible_moves.append([i, j+1])
+	blocked = check_if_spot_non_empty(board_dict, [i, j-1])
+	if blocked==False:
+		possible_moves.append([i, j-1])
+	blocked = check_if_spot_non_empty(board_dict, [i+1, j+1])
+	if blocked==False:
+		possible_moves.append([i+1, j+1])
+	blocked = check_if_spot_non_empty(board_dict, [i+1, j-1])
+	if blocked==False:
+		possible_moves.append([i+1, j-1])
+	blocked = check_if_spot_non_empty(board_dict, [i+1, j])
+	if blocked==False:
+		possible_moves.append([i+1, j])
+	blocked = check_if_spot_non_empty(board_dict, [i-1, j+1])
+	if blocked==False:
+		possible_moves.append([i-1, j+1])
+	blocked = check_if_spot_non_empty(board_dict, [i-1, j-1])
+	if blocked==False:
+		possible_moves.append([i-1, j-1])
+	blocked = check_if_spot_non_empty(board_dict, [i-1, j])
+	if blocked==False:
+		possible_moves.append([i-1, j])
 	return possible_moves
+
 
 def queen_moves(pos, board_dict):
 	possible_moves = []
@@ -953,19 +986,20 @@ def find_best_move():
 		val = new_board_dict[pos]
 		type = val[0]
 		color = val[1]
-		# new_board_dict_copy = new_board_dict.copy()
-		new_board_dict_copy = dict(new_board_dict)
-		possible_moves = determine_possible_moves(type, pos, new_board_dict_copy)
-		for move in possible_moves:
+		if color == 0:
+			# new_board_dict_copy = new_board_dict.copy()
 			new_board_dict_copy = dict(new_board_dict)
-			move_tuple = (move[0], move[1])
-			returnedValue = new_board_dict_copy.pop(pos)
-			new_board_dict_copy[move_tuple] = copy.copy(val)
-			attacks, total_score_black, total_score_white = check_pieces(new_board_dict_copy)
-			score = total_score_black - total_score_white
-			if score > max_black_score:
-				max_black_score = score
-				best_move = [copy.deepcopy(pos), copy.deepcopy(move)]
+			possible_moves = determine_possible_moves(type, pos, new_board_dict_copy)
+			for move in possible_moves:
+				new_board_dict_copy = dict(new_board_dict)
+				move_tuple = (move[0], move[1])
+				returnedValue = new_board_dict_copy.pop(pos)
+				new_board_dict_copy[move_tuple] = copy.copy(val)
+				attacks, total_score_black, total_score_white = check_pieces(new_board_dict_copy)
+				score = total_score_black - total_score_white
+				if score > max_black_score:
+					max_black_score = score
+					best_move = [copy.deepcopy(pos), copy.deepcopy(move)]
 
 	return best_move
 
@@ -982,12 +1016,12 @@ def simulate_moves():
 	print("attacks:", attacks)
 	best_move = find_best_move()
 	print("best_move:", best_move)
-	'''
 	if best_move[0] != None and best_move[1] != None:
 		best_move_tuple_1 = ( (best_move[0][0], best_move[0][1]) )
 		best_move_tuple_2 = ( (best_move[1][0], best_move[1][1]) )
+		print("Updating Position:"+ str(best_move_tuple_1) + " to "+ str(best_move_tuple_2))
 		Chess_Board.update_positions(best_move_tuple_1, best_move_tuple_2)
-	'''
+
 		
 
 
@@ -1214,6 +1248,8 @@ def play_game():
 
 	if process_input(current_color, start_position, end_position):
 		current_color = 0 if current_color == 1 else 1
+		if current_color == 0:
+			Chess_Board.simulate_board_moves()
 		Chess_Board.draw_Board()
 		update_history_gui(history_infos_temp)
 		error = 0
